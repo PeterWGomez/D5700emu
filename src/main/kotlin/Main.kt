@@ -5,7 +5,7 @@ fun main() {
     do {
         println("Enter rom name (enter exit to close):")
         input = readLine().toString()
-        val emulatorInstance = emulator()
+        val emulatorInstance = emulator(0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, )
         emulatorInstance.runEmulator()
     } while (input != "exit")
 }
