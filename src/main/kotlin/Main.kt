@@ -1,13 +1,11 @@
 package org.example
 
-import java.io.File
-
 fun main() {
-    val emulatorInstance = emulator()
-    emulatorInstance.runEmulator()
-//    val fileName = "roms/hello.d5700"
-//    val lines: List<String> = File(fileName).readLines()
-//    for (line in lines) {
-//        println(line)
-//    }
+    var input = ""
+    do {
+        println("Enter rom name (enter exit to close):")
+        input = readLine().toString()
+        val emulatorInstance = emulator()
+        emulatorInstance.runEmulator()
+    } while (input != "exit")
 }
