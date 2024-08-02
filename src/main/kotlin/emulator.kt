@@ -68,6 +68,11 @@ class emulator(
             screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toString().toInt()].toByte()
 
         // Draw the current screen
+        println("SCREEN DEBUG")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+        println("DEBUG: r${rX} as a char is ${generalRegisters[rX.toString().toInt()].toByte().toChar()}")
+        println("DEBUG: row ${rY}")
+        println("DEBUG: column ${rZ}")
         println("========")
         var charCounter = 0
         for (i in screenArray) {
@@ -88,28 +93,57 @@ class emulator(
         }
         // Assign register the value
         generalRegisters[rX.toString().toInt()] = input.toUByte(16)
+        println("READ_KEYBOARD DEBUG")
+        println("DEBUG: input is ${input}")
+        println("DEBUG: r${rX} stored as ${generalRegisters[rX.toString().toInt()]}")
     }
     fun ADD(rX: Char, rY: Char, rZ: Char,) {
         // Assign register the value
+//        var number1 = generalRegisters[rX.toString().toInt()].toInt()
+//        var number2 = generalRegisters[rY.toString().toInt()].toInt()
+//        var result = number1 + number2
         generalRegisters[rZ.toString().toInt()] =
             (generalRegisters[rX.toString().toInt()] + generalRegisters[rY.toString().toInt()]).toUByte()
+        println("ADD DEBUG")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+        println("DEBUG: r${rY} is ${generalRegisters[rY.toString().toInt()]}")
+        println("DEBUG: r${rZ} is ${generalRegisters[rZ.toString().toInt()]}")
+//        println("number1 is ${number1}")
+//        println("number2 is ${number2}")
+//        println("result is ${result}")
     }
     fun SET_A(aaa: String) {
         // Assign register the value
         A = aaa.toUShort()
+        println("SET_A DEBUG")
+        println("aaa is ${aaa}")
+        println("A = ${A}")
     }
     fun CONVERT_TO_BASE_10(rX: Char) {
         // Assign register the value
+        println("CONVERT_TO_BASE_10 DEBUG")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+        println("DEBUG: r${rX} as string is ${(generalRegisters[rX.toString().toInt()].toByte().toString())}")
         SET_A(generalRegisters[rX.toString().toInt()].toByte().toString())
         //generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
     }
     fun READ(rX: Char) {
         // Assign register the value
+        println("READ DEBUG")
+        println("DEBUG: A is ${A}")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
         generalRegisters[rX.toString().toInt()] = A.toString().toUByte(16)
+        println("After transferring A, it is")
+        println("DEBUG: A is ${A}")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
     }
     fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char) {
         // Assign register the value
+        println("CONVERT_BYTE_TO_ASCII DEBUG")
+        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+        println("DEBUG: r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
         generalRegisters[rY.toString().toInt()] = generalRegisters[rX.toString().toInt()]
+        println("DEBUG: After conversion, r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
     }
 
 }
