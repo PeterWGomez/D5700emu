@@ -32,6 +32,10 @@ class emulator(
             if (line[0] == 'F'){
                 DRAW(line[1], line[2].toString().toUByte(16), line[3].toString().toUByte(16))
             }
+            // Run READ_KEYBOARD
+            if (line[0] == '6'){
+                READ_KEYBOARD(line[1])
+            }
         }
     }
 
@@ -54,6 +58,16 @@ class emulator(
             }
         }
         println("========")
+    }
+    fun READ_KEYBOARD(rX: Char) {
+        // Read in value from user
+        println("Enter your input:")
+        var input = readLine().toString()
+        if (input == "") {
+            input = "0"
+        }
+        // Assign register the value
+        generalRegisters[rX.toString().toInt()] = input.toUByte(16)
     }
 
 }
