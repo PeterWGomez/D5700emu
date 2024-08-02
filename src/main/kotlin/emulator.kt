@@ -36,6 +36,26 @@ class emulator(
             if (line[0] == '6'){
                 READ_KEYBOARD(line[1])
             }
+            // Run ADD
+            if (line[0] == '1'){
+                ADD(line[1], line[2], line[3])
+            }
+            // Run SET_A
+            if (line[0] == 'A'){
+                SET_A(line[1].toString()+line[2].toString()+line[3].toString())
+            }
+            // Run READ
+            if (line[0] == '3'){
+                READ(line[1])
+            }
+            // Run COVERT_TO_BASE_10
+            if (line[0] == 'D'){
+                CONVERT_TO_BASE_10(line[1])
+            }
+            // Run CONVERT_BYTE_TO_ASCII
+            if (line[0] == 'E'){
+                CONVERT_BYTE_TO_ASCII(line[1], line[2])
+            }
         }
     }
 
@@ -68,6 +88,28 @@ class emulator(
         }
         // Assign register the value
         generalRegisters[rX.toString().toInt()] = input.toUByte(16)
+    }
+    fun ADD(rX: Char, rY: Char, rZ: Char,) {
+        // Assign register the value
+        generalRegisters[rZ.toString().toInt()] =
+            (generalRegisters[rX.toString().toInt()] + generalRegisters[rY.toString().toInt()]).toUByte()
+    }
+    fun SET_A(aaa: String) {
+        // Assign register the value
+        A = aaa.toUShort()
+    }
+    fun CONVERT_TO_BASE_10(rX: Char) {
+        // Assign register the value
+        SET_A(generalRegisters[rX.toString().toInt()].toByte().toString())
+        //generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
+    }
+    fun READ(rX: Char) {
+        // Assign register the value
+        generalRegisters[rX.toString().toInt()] = A.toString().toUByte(16)
+    }
+    fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char) {
+        // Assign register the value
+        generalRegisters[rY.toString().toInt()] = generalRegisters[rX.toString().toInt()]
     }
 
 }
