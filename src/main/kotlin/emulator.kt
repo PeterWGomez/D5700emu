@@ -5,18 +5,16 @@ import java.io.File
 @OptIn(ExperimentalUnsignedTypes::class)
 class emulator(
     // General purpose registers
-    var generalRegisters: UByteArray = UByteArray(8),
+    //var generalRegisters: UByteArray = UByteArray(8),
+    var generalRegisters: Array<String> = arrayOf("0", "0", "0", "0", "0", "0", "0", "0"),
     // Special registers
-    var P: UShort = 0u,
-    var T: UByte = 0u,
-    var A: UShort = 0u,
-    var M: UByte = 0u,     // There is no bit in Kotlin, using this
+    var P: String = "0",
+    var T: String = "0",
+    var A: String = "0",
+    var M: String = "0",
     // Screen
-    var screenArray: ByteArray = ByteArray(64)
+    val screenArray: Array<String> = Array(64) { "0" }
 ) {
-    init {
-        screenArray.fill(0)
-    }
 
     fun runEmulator(input: String) {
         // Read the ROM
@@ -26,65 +24,89 @@ class emulator(
         for (line in lines) {
             // Run STORE
             if (line[0] == '0'){
-                STORE(line[1], line[2].toString()+line[3].toString())
+                STORE(line[1].toString(), line[2].toString()+line[3].toString())
             }
             // Run DRAW
             if (line[0] == 'F'){
-                DRAW(line[1], line[2].toString().toUByte(16), line[3].toString().toUByte(16))
+                DRAW(line[1].toString(), line[2].toString(), line[3].toString(), input)
             }
             // Run READ_KEYBOARD
             if (line[0] == '6'){
-                READ_KEYBOARD(line[1])
+                READ_KEYBOARD(line[1].toString())
             }
             // Run ADD
             if (line[0] == '1'){
-                ADD(line[1], line[2], line[3])
+                ADD(line[1].toString(), line[2].toString(), line[3].toString())
             }
-            // Run SET_A
-            if (line[0] == 'A'){
-                SET_A(line[1].toString()+line[2].toString()+line[3].toString())
+            // Run SUB
+            if (line[0] == '2'){
+                SUB(line[1].toString(), line[2].toString(), line[3].toString())
             }
-            // Run READ
-            if (line[0] == '3'){
-                READ(line[1])
-            }
-            // Run COVERT_TO_BASE_10
-            if (line[0] == 'D'){
-                CONVERT_TO_BASE_10(line[1])
-            }
-            // Run CONVERT_BYTE_TO_ASCII
-            if (line[0] == 'E'){
-                CONVERT_BYTE_TO_ASCII(line[1], line[2])
-            }
+//            // Run SET_A
+//            if (line[0] == 'A'){
+//                SET_A(line[1].toString()+line[2].toString()+line[3].toString())
+//            }
+//            // Run READ
+//            if (line[0] == '3'){
+//                READ(line[1])
+//            }
+//            // Run COVERT_TO_BASE_10
+//            if (line[0] == 'D'){
+//                CONVERT_TO_BASE_10(line[1].toString())
+//            }
+//            // Run CONVERT_BYTE_TO_ASCII
+//            if (line[0] == 'E'){
+//                CONVERT_BYTE_TO_ASCII(line[1], line[2])
+//            }
         }
     }
 
-    fun STORE(rX: Char, bb: String) {
+    fun STORE(rX: String, bb: String) {
         // Assign register the value
-        generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
+        generalRegisters[rX.toInt()] = bb
+        //println(bb)
+        //println(generalRegisters[rX.toInt()].toInt(16).toChar())
     }
-    fun DRAW(rX: Char, rY: UByte, rZ: UByte) {
+    fun DRAW(rX: String, rY: String, rZ: String, command: String) {
         // rX is the register being read. rY is the row, rZ is the column of where it will be printed
-            screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toString().toInt()].toByte()
-
+        if (command == "hello") {
+            screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toInt()].toInt(16).toChar().toString()
+        }
+        if (command == "addition" || command == "subtraction") {
+            screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toInt()].toInt(16).toString()
+        }
         // Draw the current screen
-        println("SCREEN DEBUG")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-        println("DEBUG: r${rX} as a char is ${generalRegisters[rX.toString().toInt()].toByte().toChar()}")
-        println("DEBUG: row ${rY}")
-        println("DEBUG: column ${rZ}")
+        println(generalRegisters[rX.toInt()])
+        println(screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1])
         println("========")
         var charCounter = 0
+        var lineCounter = 0
         for (i in screenArray) {
-            print(i.toChar())
-            charCounter++
-            if (charCounter % 8 == 0){
-                println()
+            if (i.length == 1) {
+                print(i)
+                charCounter++
+                if (charCounter % 8 == 0){
+                    lineCounter++
+                    println()
+                }
+            }
+            else if (i.length > 1) {
+                for (letter in i){
+                    print(letter)
+                    charCounter++
+                    if (charCounter % 8 == 0){
+                        lineCounter++
+                        println()
+                    }
+                }
+            }
+            if (lineCounter == 8){
+                return
             }
         }
         println("========")
     }
-    fun READ_KEYBOARD(rX: Char) {
+    fun READ_KEYBOARD(rX: String) {
         // Read in value from user
         println("Enter your input:")
         var input = readLine().toString()
@@ -92,58 +114,53 @@ class emulator(
             input = "0"
         }
         // Assign register the value
-        generalRegisters[rX.toString().toInt()] = input.toUByte(16)
-        println("READ_KEYBOARD DEBUG")
-        println("DEBUG: input is ${input}")
-        println("DEBUG: r${rX} stored as ${generalRegisters[rX.toString().toInt()]}")
+        STORE(rX, input)
     }
-    fun ADD(rX: Char, rY: Char, rZ: Char,) {
+    fun ADD(rX: String, rY: String, rZ: String,) {
         // Assign register the value
-//        var number1 = generalRegisters[rX.toString().toInt()].toInt()
-//        var number2 = generalRegisters[rY.toString().toInt()].toInt()
-//        var result = number1 + number2
-        generalRegisters[rZ.toString().toInt()] =
-            (generalRegisters[rX.toString().toInt()] + generalRegisters[rY.toString().toInt()]).toUByte()
-        println("ADD DEBUG")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-        println("DEBUG: r${rY} is ${generalRegisters[rY.toString().toInt()]}")
-        println("DEBUG: r${rZ} is ${generalRegisters[rZ.toString().toInt()]}")
-//        println("number1 is ${number1}")
-//        println("number2 is ${number2}")
-//        println("result is ${result}")
+        var result = generalRegisters[rX.toInt()].toInt() + generalRegisters[rY.toInt()].toInt()
+        var result2 = result.toString()
+        var result3 = result2.toInt()
+        var hexResult = result3.toString(16)
+        STORE(rZ, hexResult)
     }
-    fun SET_A(aaa: String) {
+    fun SUB(rX: String, rY: String, rZ: String,) {
         // Assign register the value
-        A = aaa.toUShort()
-        println("SET_A DEBUG")
-        println("aaa is ${aaa}")
-        println("A = ${A}")
+        var result = generalRegisters[rX.toInt()].toInt() - generalRegisters[rY.toInt()].toInt()
+        var result2 = result.toString()
+        var result3 = result2.toInt()
+        var hexResult = result3.toString(16)
+        STORE(rZ, hexResult)
     }
-    fun CONVERT_TO_BASE_10(rX: Char) {
-        // Assign register the value
-        println("CONVERT_TO_BASE_10 DEBUG")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-        println("DEBUG: r${rX} as string is ${(generalRegisters[rX.toString().toInt()].toByte().toString())}")
-        SET_A(generalRegisters[rX.toString().toInt()].toByte().toString())
-        //generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
-    }
-    fun READ(rX: Char) {
-        // Assign register the value
-        println("READ DEBUG")
-        println("DEBUG: A is ${A}")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-        generalRegisters[rX.toString().toInt()] = A.toString().toUByte(16)
-        println("After transferring A, it is")
-        println("DEBUG: A is ${A}")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-    }
-    fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char) {
-        // Assign register the value
-        println("CONVERT_BYTE_TO_ASCII DEBUG")
-        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-        println("DEBUG: r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
-        generalRegisters[rY.toString().toInt()] = generalRegisters[rX.toString().toInt()]
-        println("DEBUG: After conversion, r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
-    }
+//    fun SET_A(aaa: String) {
+//        // Assign register the value
+//        A = aaa
+//        println("SET_A DEBUG")
+//        println("aaa is ${aaa}")
+//        println("A = ${A}")
+//    }
+//    fun CONVERT_TO_BASE_10(rX: String) {
+//        // Assign register the value
+//        SET_A(generalRegisters[rX.toInt()])
+//        //generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
+//    }
+//    fun READ(rX: Char) {
+//        // Assign register the value
+//        println("READ DEBUG")
+//        println("DEBUG: A is ${A}")
+//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+//        generalRegisters[rX.toString().toInt()] = A.toString().toUByte(16)
+//        println("After transferring A, it is")
+//        println("DEBUG: A is ${A}")
+//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+//    }
+//    fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char) {
+//        // Assign register the value
+//        println("CONVERT_BYTE_TO_ASCII DEBUG")
+//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
+//        println("DEBUG: r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
+//        generalRegisters[rY.toString().toInt()] = generalRegisters[rX.toString().toInt()]
+//        println("DEBUG: After conversion, r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
+//    }
 
 }
