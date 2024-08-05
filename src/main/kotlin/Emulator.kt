@@ -1,5 +1,6 @@
 package org.example
 
+import com.example.emulatorops.emulatorOperations
 import java.io.File
 
 class Emulator(
@@ -12,7 +13,7 @@ class Emulator(
     var M: String = "0",
     // Screen
     val screenArray: Array<String> = Array(64) { "0" }
-) {
+): emulatorOperations {
 
     fun runEmulator(input: String) {
         // Read the ROM
@@ -62,13 +63,36 @@ class Emulator(
         }
     }
 
-    fun STORE(rX: String, bb: String) {
+    override fun SET_A(aaa: String): String {
+        TODO("Not yet implemented")
+
+    }
+
+    override fun SET_T(B: String, bb: String): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun READ_T(C: String, rX: String): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun CONVERT_TO_BASE_10(rX: String): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun READ(rX: Char): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun STORE(rX: String, bb: String) {
         // Assign register the value
         generalRegisters[rX.toInt()] = bb
-        //println(bb)
-        //println(generalRegisters[rX.toInt()].toInt(16).toChar())
     }
-    fun DRAW(rX: String, rY: String, rZ: String, command: String) {
+    override fun DRAW(rX: String, rY: String, rZ: String, command: String) {
         // rX is the register being read. rY is the row, rZ is the column of where it will be printed
         if (command == "hello") {
             screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toInt()].toInt(16).toChar().toString()
@@ -77,8 +101,6 @@ class Emulator(
             screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1] = generalRegisters[rX.toInt()].toInt(16).toString()
         }
         // Draw the current screen
-        println(generalRegisters[rX.toInt()])
-        println(screenArray[(rY.toInt()+1)*(rZ.toInt()+1)-1])
         println("========")
         var charCounter = 0
         var lineCounter = 0
@@ -107,7 +129,7 @@ class Emulator(
         }
         println("========")
     }
-    fun READ_KEYBOARD(rX: String) {
+    override fun READ_KEYBOARD(rX: String) {
         // Read in value from user
         println("Enter your input:")
         var input = readLine().toString()
@@ -117,35 +139,4 @@ class Emulator(
         // Assign register the value
         STORE(rX, input)
     }
-//    fun SET_A(aaa: String) {
-//        // Assign register the value
-//        A = aaa
-//        println("SET_A DEBUG")
-//        println("aaa is ${aaa}")
-//        println("A = ${A}")
-//    }
-//    fun CONVERT_TO_BASE_10(rX: String) {
-//        // Assign register the value
-//        SET_A(generalRegisters[rX.toInt()])
-//        //generalRegisters[rX.toString().toInt()] = bb.toUByte(16)
-//    }
-//    fun READ(rX: Char) {
-//        // Assign register the value
-//        println("READ DEBUG")
-//        println("DEBUG: A is ${A}")
-//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-//        generalRegisters[rX.toString().toInt()] = A.toString().toUByte(16)
-//        println("After transferring A, it is")
-//        println("DEBUG: A is ${A}")
-//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-//    }
-//    fun CONVERT_BYTE_TO_ASCII(rX: Char, rY: Char) {
-//        // Assign register the value
-//        println("CONVERT_BYTE_TO_ASCII DEBUG")
-//        println("DEBUG: r${rX} is ${generalRegisters[rX.toString().toInt()]}")
-//        println("DEBUG: r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
-//        generalRegisters[rY.toString().toInt()] = generalRegisters[rX.toString().toInt()]
-//        println("DEBUG: After conversion, r${rY}  is ${(generalRegisters[rY.toString().toInt()])}")
-//    }
-
 }
