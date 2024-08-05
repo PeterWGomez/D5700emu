@@ -17,9 +17,15 @@ class Emulator(
 
     fun runEmulator(input: String) {
         // Read the ROM
-        // Need error checking on input
+        var fileName = ""
         var myMath = MathEmu()
-        val fileName = "roms/${input}.d5700"
+        if (input == "hello" || input == "addition" || input == "subtraction") {
+            fileName = "roms/${input}.d5700"
+        }
+        else {
+            println("Program ${input} is not installed on this system.")
+            return
+        }
         val lines: List<String> = File(fileName).readLines()
         for (line in lines) {
             // Run STORE
@@ -36,11 +42,19 @@ class Emulator(
             }
             // Run ADD
             if (line[0] == '1'){
+                if (generalRegisters[line[1].toString().toInt()].toIntOrNull() == null || generalRegisters[line[2].toString().toInt()].toIntOrNull() == null) {
+                    println("One or more inputs were not integers, exiting...")
+                    return
+                }
                 var result = myMath.ADD(generalRegisters[line[1].toString().toInt()].toInt(), generalRegisters[line[2].toString().toInt()].toInt())
                 STORE(line[3].toString(), result)
             }
             // Run SUB
             if (line[0] == '2'){
+                if (generalRegisters[line[1].toString().toInt()].toIntOrNull() == null || generalRegisters[line[2].toString().toInt()].toIntOrNull() == null) {
+                    println("One or more inputs were not integers, exiting...")
+                    return
+                }
                 var result = myMath.SUB(generalRegisters[line[1].toString().toInt()].toInt(), generalRegisters[line[2].toString().toInt()].toInt())
                 STORE(line[3].toString(), result)
             }
