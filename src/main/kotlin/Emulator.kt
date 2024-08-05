@@ -2,10 +2,8 @@ package org.example
 
 import java.io.File
 
-@OptIn(ExperimentalUnsignedTypes::class)
-class emulator(
+class Emulator(
     // General purpose registers
-    //var generalRegisters: UByteArray = UByteArray(8),
     var generalRegisters: Array<String> = arrayOf("0", "0", "0", "0", "0", "0", "0", "0"),
     // Special registers
     var P: String = "0",
