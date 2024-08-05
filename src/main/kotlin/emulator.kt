@@ -19,6 +19,7 @@ class emulator(
     fun runEmulator(input: String) {
         // Read the ROM
         // Need error checking on input
+        var myMath = MathEmu()
         val fileName = "roms/${input}.d5700"
         val lines: List<String> = File(fileName).readLines()
         for (line in lines) {
@@ -36,11 +37,13 @@ class emulator(
             }
             // Run ADD
             if (line[0] == '1'){
-                ADD(line[1].toString(), line[2].toString(), line[3].toString())
+                var result = myMath.ADD(generalRegisters[line[1].toString().toInt()].toInt(), generalRegisters[line[2].toString().toInt()].toInt())
+                STORE(line[3].toString(), result)
             }
             // Run SUB
             if (line[0] == '2'){
-                SUB(line[1].toString(), line[2].toString(), line[3].toString())
+                var result = myMath.SUB(generalRegisters[line[1].toString().toInt()].toInt(), generalRegisters[line[2].toString().toInt()].toInt())
+                STORE(line[3].toString(), result)
             }
 //            // Run SET_A
 //            if (line[0] == 'A'){
@@ -115,22 +118,6 @@ class emulator(
         }
         // Assign register the value
         STORE(rX, input)
-    }
-    fun ADD(rX: String, rY: String, rZ: String,) {
-        // Assign register the value
-        var result = generalRegisters[rX.toInt()].toInt() + generalRegisters[rY.toInt()].toInt()
-        var result2 = result.toString()
-        var result3 = result2.toInt()
-        var hexResult = result3.toString(16)
-        STORE(rZ, hexResult)
-    }
-    fun SUB(rX: String, rY: String, rZ: String,) {
-        // Assign register the value
-        var result = generalRegisters[rX.toInt()].toInt() - generalRegisters[rY.toInt()].toInt()
-        var result2 = result.toString()
-        var result3 = result2.toInt()
-        var hexResult = result3.toString(16)
-        STORE(rZ, hexResult)
     }
 //    fun SET_A(aaa: String) {
 //        // Assign register the value
